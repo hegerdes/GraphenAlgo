@@ -85,39 +85,39 @@ public class Puzzle implements Comparable<Puzzle>{
         //Find the 0
         int index = copy.findZero();
         if (index == -1) return null;
-        int x = index / 3;
-        int y = index % 3;
+        int pos1 = index / 3;
+        int pos2 = index % 3;
 
         //Check witch switches are allowed
-        if(x+1 < 3){
-            copy = switchNum(copy,x,y,x+1,y);
+        if(pos1+1 < 3){
+            copy = switchNum(copy,pos1,pos2,pos1+1,pos2);
             if(!seen(copy)){
                 //If not seen return
                 return copy;
             }
             //Seen already. Undo switch.
-            copy = switchNum(copy,x+1,y,x,y);
+            copy = switchNum(copy,pos1+1,pos2,pos1,pos2);
         }
-        if(y+1 < 3){
-            copy = switchNum(copy,x,y,x,y+1);
+        if(pos2+1 < 3){
+            copy = switchNum(copy,pos1,pos2,pos1,pos2+1);
             if(!seen(copy)){
                 return copy;
             }
-            copy = switchNum(copy,x,y+1,x,y);
+            copy = switchNum(copy,pos1,pos2+1,pos1,pos2);
         }
-        if(x-1 >= 0){
-            copy = switchNum(copy,x,y,x-1,y);
+        if(pos1-1 >= 0){
+            copy = switchNum(copy,pos1,pos2,pos1-1,pos2);
             if(!seen(copy)){
                 return copy;
             }
-            copy = switchNum(copy,x-1,y,x,y);
+            copy = switchNum(copy,pos1-1,pos2,pos1,pos2);
         }
-        if(y-1 >= 0){
-            copy = switchNum(copy,x,y,x,y-1);
+        if(pos2-1 >= 0){
+            copy = switchNum(copy,pos1,pos2,pos1,pos2-1);
             if(!seen(copy)){
                 return copy;
             }
-            copy = switchNum(copy,x,y-1,x,y);
+            copy = switchNum(copy,pos1,pos2-1,pos1,pos2);
         }
 
         //All Neighbors already seen
@@ -136,17 +136,17 @@ public class Puzzle implements Comparable<Puzzle>{
     /**
      * Switch two numbers in Puzzle
      * @param p The Puzzle to switch
-     * @param x1 Old x Pos
-     * @param y1 Pld y Pos
-     * @param x2 New x Pos
-     * @param y2 New y Pos
+     * @param pos1_x Old PosX
+     * @param pos1_y Pld PosY
+     * @param pos2_x New PosX
+     * @param pos2_y New PosY
      * @return The switched Puzzle
      */
-    private static Puzzle switchNum(Puzzle p, int x1, int y1, int x2, int y2){
+    private static Puzzle switchNum(Puzzle p, int pos1_x, int pos1_y, int pos2_x, int pos2_y){
         int[][] puzzle = p.getCurrent_puzzle();
-        int tmp = puzzle[x1][y1];
-        puzzle[x1][y1] = puzzle[x2][y2];
-        puzzle[x2][y2] = tmp;
+        int tmp = puzzle[pos1_x][pos1_y];
+        puzzle[pos1_x][pos1_y] = puzzle[pos2_x][pos2_y];
+        puzzle[pos2_x][pos2_y] = tmp;
         return new Puzzle(puzzle);
     }
 
