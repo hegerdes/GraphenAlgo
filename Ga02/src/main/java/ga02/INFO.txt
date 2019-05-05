@@ -1,0 +1,24 @@
+Gruppe:
+Henrik Gerdes 969272
+Tim Hartmann 970612
+Sven Berlekamp 959295
+
+Es kann den Fall geben, dass keine Lösung gefunden wird.
+
+Um dies zu erkennen müssen die Zahlen in dem Puzzle der Reihe nach in eine Liste geschieben werden (ohne 0).
+Dann wird die Liste durchlaufen und für jede Zahl wird gezählt wiviele vorherige Zahlen größer sind als die aktuelle.
+Ist dise Zähler am Ende ungrade ist das Puzzle nicht lösbar.
+
+Beispiel: Liste{1,3,2,4,5,6,7,8}
+=> Der Zähler ist 1 weil es nur eine vorherige Zahl gibt, die größer ist als eine aktuelle (3 ist größer als 2)
+Weil der Zähler ungrade ist, ist es nicht lösbar.
+
+Außerdem:
+Wäre es eine unbeshcränkte Suche, so könnte man in unendliche Pfade absteigen,
+das wird hier durch die Begrunzung verhindert. Allerdings kann es sein,
+dass so viele ungünstige Verschiebungen vorgenommen werden, dass der Stack die Grenze erreicht
+und den Konoten der zum Ziel führt aufgrund der Stackbegrenzung wegschmeißt und neu beginnt.
+
+Dies kann mehrfach vorkommen und so wird nie eine Lösung gefunden.
+Bei der TiefenSuche werden auch viele kontraproduktive Verschiebungen vorgenommen.
+Für den Idealen Lösungsweg sollte man eine Informierte Suche oder Breitensuche nutzen.
