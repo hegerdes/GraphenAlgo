@@ -35,4 +35,5 @@ hs_err_pid*
 *.png
 *.iml
 
-P1/src/main/java/de/uos/inf/ko/ga/graph/Test\.java
+#Individual Files
+Graphen_Workspace_Code.code-workspace
