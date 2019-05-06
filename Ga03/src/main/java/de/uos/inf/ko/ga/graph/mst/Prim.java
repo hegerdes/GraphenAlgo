@@ -4,6 +4,7 @@ import de.uos.inf.ko.ga.graph.Graph;
 import de.uos.inf.ko.ga.graph.impl.UndirectedGraphList;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -73,8 +74,7 @@ public class Prim {
                 if(weight < Double.POSITIVE_INFINITY && current_node < Integer.MAX_VALUE &&
                         next_node < Integer.MAX_VALUE){
                     //Found ne new shortest edge and add it to minimal graph
-                    System.out.println("Add: " + current_node + " " + next_node + " GW: " + weight);
-                    mst.addEdge(current_node,next_node,graph.getEdgeWeight(current_node,next_node));
+                    mst.addEdge(current_node,next_node,weight);
                     added.add(next_node);
                     not_added.remove(next_node);
 
@@ -101,8 +101,19 @@ public class Prim {
 	public static Graph minimumSpanningTreeHeap(Graph graph) {
 		assert(graph != null);
 		assert(!graph.isDirected());
-
 		final Graph mst = new UndirectedGraphList();
+
+		mst.addVertices(graph.getVertexCount());
+
+		Set<Integer> added = new HashSet<>();
+        List<Integer> neighbors;
+
+        added.add(0);
+		neighbors = graph.getNeighbors(0);
+
+		for(Integer e: neighbors){
+
+        }
 
 		/* TODO: implement Prim's algorithm */
 
