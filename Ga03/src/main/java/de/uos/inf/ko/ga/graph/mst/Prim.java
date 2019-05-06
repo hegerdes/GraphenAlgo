@@ -2,11 +2,15 @@ package de.uos.inf.ko.ga.graph.mst;
 
 import de.uos.inf.ko.ga.graph.Graph;
 import de.uos.inf.ko.ga.graph.impl.UndirectedGraphList;
+import de.uos.inf.ko.ga.graph.util.GenBinHeap;
+import de.uos.inf.ko.ga.graph.util.Node;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 
 public class Prim {
@@ -105,17 +109,48 @@ public class Prim {
 
 		mst.addVertices(graph.getVertexCount());
 
+		//INIT
+        double weights[] = new double[graph.getVertexCount()];
+        int pred[] = new int[graph.getVertexCount()];
+        Arrays.fill(weights,Double.POSITIVE_INFINITY);
+        Arrays.fill(weights,Integer.MAX_VALUE);
+		GenBinHeap<Node> heap = new GenBinHeap<>();
 		Set<Integer> added = new HashSet<>();
         List<Integer> neighbors;
 
         added.add(0);
 		neighbors = graph.getNeighbors(0);
 
-		for(Integer e: neighbors){
-
+		double weight = Double.POSITIVE_INFINITY;
+		for(Integer j: neighbors){
+		    weight = graph.getEdgeWeight(0,j);
+		    if(weight < Double.POSITIVE_INFINITY) {
+		        pred[j] = 1;
+		        weights[j] = weight;
+                heap.add(new Node(weight, 0));
+                System.out.println("Add " + 0 + " and " + j);
+            }else System.out.println("FEHLER GEWICHT1");
+		    weight = Double.POSITIVE_INFINITY;
         }
 
-		/* TODO: implement Prim's algorithm */
+		while (added.size() != graph.getVertexCount() && !heap.isEmpty()){
+            int i = heap.remove().getPred();
+            added.add(i);
+            System.out.println("ADD to Graph: " + pred[i] + " " + i + " weight: " + graph.getEdgeWeight(pred[i],i));
+            mst.addEdge(pred[i],i,graph.getEdgeWeight(pred[i],i));
+            neighbors = graph.getNeighbors(i);
+            for(Integer j: neighbors){
+               // System.out.println("get Nei");
+                if(!added.contains(j)){
+                    if(graph.getEdgeWeight(i,j) < weights[j]){
+                        weights[j] = graph.getEdgeWeight(i,j);
+                        pred[j] = i;
+                        heap.add(new Node(weights[j],i));
+                    }
+                }
+            }
+
+        }
 
 		return mst;
 	}

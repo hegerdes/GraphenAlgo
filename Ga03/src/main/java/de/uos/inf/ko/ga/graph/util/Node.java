@@ -33,7 +33,7 @@ public class Node implements Comparable<Node> {
     @Override
     public String toString() {
         StringBuilder st = new StringBuilder();
-        st.append("Weight: " + weight);
+        st.append("Weight: " + weight + "pred: " + pred);
         return st.toString();
     }
 }
