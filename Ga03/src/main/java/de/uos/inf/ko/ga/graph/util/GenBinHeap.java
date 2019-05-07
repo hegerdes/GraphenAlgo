@@ -38,7 +38,6 @@ public class GenBinHeap<T extends Comparable<T>> extends PriorityQueue<T> {
         heap[index] = value;
 
         shiftUp();
-        System.out.println("SizeHeap:" + size);
         return true;
     }
 

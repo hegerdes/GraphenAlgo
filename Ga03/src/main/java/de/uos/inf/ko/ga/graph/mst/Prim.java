@@ -2,15 +2,13 @@ package de.uos.inf.ko.ga.graph.mst;
 
 import de.uos.inf.ko.ga.graph.Graph;
 import de.uos.inf.ko.ga.graph.impl.UndirectedGraphList;
-import de.uos.inf.ko.ga.graph.util.GenBinHeap;
 import de.uos.inf.ko.ga.graph.util.Node;
-
+import de.uos.inf.ko.ga.graph.util.NodeHeap;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 
 public class Prim {
@@ -32,23 +30,8 @@ public class Prim {
         //List of all nodes in the graph.
         Set<Integer> not_added = IntStream.rangeClosed(0, graph.getVertexCount()-1).boxed().collect(Collectors.toSet());
 
-        //It could happen that the start node is isolated. So find a start node that has at least one edge
-        int start = 0;
-        boolean found = false;
-        while (!found){
-            for(Integer end: not_added){
-                if(graph.hasEdge(start,end)){
-                    //Found a start with at least one edge
-                    found = true;
-                    break;
-                }
-            }
-            start++;
-            if(start >= graph.getVertexCount()-1){
-                //Graph has no connected Edges
-                return mst;
-            }
-        }
+        int start = findStart(graph);
+
         //Add all nodes to minimal exit graph
         mst.addVertices(graph.getVertexCount());
 
@@ -84,7 +67,7 @@ public class Prim {
 
                 }else{
                     //Found now new shortest edge. So ist must be isolated
-                    System.out.println("Es gibt Isolierte Knoten:");
+                    System.out.print("FAIL: Es gibt Isolierte Knoten:");
                     for(Integer e: not_added) System.out.print(e + " ");
                     System.out.println();
                     break;
@@ -111,47 +94,58 @@ public class Prim {
 
 		//INIT
         double weights[] = new double[graph.getVertexCount()];
-        int pred[] = new int[graph.getVertexCount()];
         Arrays.fill(weights,Double.POSITIVE_INFINITY);
-        Arrays.fill(weights,Integer.MAX_VALUE);
-		GenBinHeap<Node> heap = new GenBinHeap<>();
-		Set<Integer> added = new HashSet<>();
+
+        //GenBinHeap<Node> heap = new GenBinHeap<>();
+        NodeHeap heap = new NodeHeap();
+        Set<Integer> added = new HashSet<>();
         List<Integer> neighbors;
 
-        added.add(0);
-		neighbors = graph.getNeighbors(0);
+        int start = findStart(graph);
+        added.add(start);
+		neighbors = graph.getNeighbors(start);
 
-		double weight = Double.POSITIVE_INFINITY;
-		for(Integer j: neighbors){
-		    weight = graph.getEdgeWeight(0,j);
-		    if(weight < Double.POSITIVE_INFINITY) {
-		        pred[j] = 1;
-		        weights[j] = weight;
-                heap.add(new Node(weight, 0));
-                System.out.println("Add " + 0 + " and " + j);
-            }else System.out.println("FEHLER GEWICHT1");
-		    weight = Double.POSITIVE_INFINITY;
+        for(Integer e: neighbors){
+            heap.add(new Node(graph.getEdgeWeight(start,e),start,e));
+            weights[e] = graph.getEdgeWeight(start,e);
         }
 
-		while (added.size() != graph.getVertexCount() && !heap.isEmpty()){
-            int i = heap.remove().getPred();
-            added.add(i);
-            System.out.println("ADD to Graph: " + pred[i] + " " + i + " weight: " + graph.getEdgeWeight(pred[i],i));
-            mst.addEdge(pred[i],i,graph.getEdgeWeight(pred[i],i));
-            neighbors = graph.getNeighbors(i);
-            for(Integer j: neighbors){
-               // System.out.println("get Nei");
-                if(!added.contains(j)){
-                    if(graph.getEdgeWeight(i,j) < weights[j]){
-                        weights[j] = graph.getEdgeWeight(i,j);
-                        pred[j] = i;
-                        heap.add(new Node(weights[j],i));
+        while (!heap.isEmpty()){
+            Node min = heap.remove();
+            added.add(min.getEnd());
+            mst.addEdge(min.getStart(),min.getEnd(),graph.getEdgeWeight(min.getStart(),min.getEnd()));
+
+            neighbors = graph.getNeighbors(min.getEnd());
+            for(Integer e: neighbors){
+                if(!added.contains(e)){
+                    if(graph.getEdgeWeight(min.getEnd(),e) < weights[e]){
+                        weights[e] = graph.getEdgeWeight(min.getEnd(),e);
+                        heap.add(new Node(graph.getEdgeWeight(min.getEnd(),e),min.getEnd(),e));
                     }
                 }
             }
+
 
         }
 
 		return mst;
 	}
+
+	private static int findStart(Graph graph){
+        //It could happen that the start node is isolated. So find a start node that has at least one edge
+        int start = 0;
+        boolean found = false;
+        while (!found){
+            for(int i=0;i < graph.getVertexCount()-1; i++){
+                if(graph.hasEdge(start,i)){
+                    //Found a start with at least one edge
+                    return start;
+                }
+            }
+            start++;
+        }
+        //Graph has no connected Edges
+        return Integer.MAX_VALUE;
+
+    }
 }
