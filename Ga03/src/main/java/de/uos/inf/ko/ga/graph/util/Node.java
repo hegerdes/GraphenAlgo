@@ -3,24 +3,29 @@ package de.uos.inf.ko.ga.graph.util;
 public class Node implements Comparable<Node> {
 
     private double weight;
-    private int pred;
+    private int node2;
+    private int node1;
 
     /**
      * Construct new Node with data
      * @param weight
-     * @param pred
      */
-    public Node(double weight, int pred){
-        this.pred = pred;
+    public Node(double weight, int node1, int node2){
+        this.node1 = node1;
         this.weight = weight;
+        this.node2 = node2;
     }
 
     public double getWeight() {
         return weight;
     }
 
-    public int getPred() {
-        return pred;
+    public int getEnd() {
+        return node2;
+    }
+
+    public int getStart() {
+        return node1;
     }
 
     @Override
@@ -33,7 +38,7 @@ public class Node implements Comparable<Node> {
     @Override
     public String toString() {
         StringBuilder st = new StringBuilder();
-        st.append("Weight: " + weight + "pred: " + pred);
+        st.append("Weight: " + weight + "node1: " + node1 + " node2: "  +node2);
         return st.toString();
     }
 }
