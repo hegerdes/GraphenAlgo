@@ -30,12 +30,14 @@ public class Prim {
         //List of all nodes in the graph.
         Set<Integer> not_added = IntStream.rangeClosed(0, graph.getVertexCount()-1).boxed().collect(Collectors.toSet());
 
-        int start = findStart(graph);
+        //Return empty graph if isolated nodes
+        //if(hasIsolated(graph)) return mst;
 
         //Add all nodes to minimal exit graph
         mst.addVertices(graph.getVertexCount());
 
         //Add the start node to added and remove it form not_added
+        int start = findStart(graph);
         added.add(start);
         not_added.remove(start);
 
@@ -58,8 +60,7 @@ public class Prim {
                         }
                     }
                 }
-                if(weight < Double.POSITIVE_INFINITY && current_node < Integer.MAX_VALUE &&
-                        next_node < Integer.MAX_VALUE){
+                if(weight < Double.POSITIVE_INFINITY){
                     //Found ne new shortest edge and add it to minimal graph
                     mst.addEdge(current_node,next_node,weight);
                     added.add(next_node);
@@ -67,10 +68,10 @@ public class Prim {
 
                 }else{
                     //Found now new shortest edge. So ist must be isolated
-                    System.out.print("FAIL: Es gibt Isolierte Knoten:");
+                    System.out.print("FAIL: Es gibt Isolierte Knoten: ");
                     for(Integer e: not_added) System.out.print(e + " ");
                     System.out.println();
-                    break;
+                    return  new UndirectedGraphList();
                 }
             //Reset global compare states
             weight = Double.POSITIVE_INFINITY;
@@ -90,31 +91,44 @@ public class Prim {
 		assert(!graph.isDirected());
 		final Graph mst = new UndirectedGraphList();
 
-		mst.addVertices(graph.getVertexCount());
+		//Return empty graph if isolated nodes
+        //if(hasIsolated(graph)) return mst;
 
 		//INIT
-        double weights[] = new double[graph.getVertexCount()];
+        double[] weights = new double[graph.getVertexCount()];
         Arrays.fill(weights,Double.POSITIVE_INFINITY);
+        mst.addVertices(graph.getVertexCount());
 
         //GenBinHeap<Node> heap = new GenBinHeap<>();
         NodeHeap heap = new NodeHeap();
         Set<Integer> added = new HashSet<>();
         List<Integer> neighbors;
 
+        //Find a not isolated Node for start
         int start = findStart(graph);
         added.add(start);
 		neighbors = graph.getNeighbors(start);
 
+		//Put first neighbors in heap and remember weights
         for(Integer e: neighbors){
             heap.add(new Node(graph.getEdgeWeight(start,e),start,e));
             weights[e] = graph.getEdgeWeight(start,e);
         }
 
-        while (!heap.isEmpty()){
-            Node min = heap.remove();
-            added.add(min.getEnd());
-            mst.addEdge(min.getStart(),min.getEnd(),graph.getEdgeWeight(min.getStart(),min.getEnd()));
+        //Get all Nodes through neighbors and add the one with min weight to mst
+        while (added.size() <= graph.getVertexCount()- 1 && !heap.isEmpty()){
 
+            //remove the cheapest Node and add to mst
+            Node min = heap.remove();
+            //Only add node if not added already
+            if(!added.contains(min.getEnd()))
+                mst.addEdge(min.getStart(),min.getEnd(),graph.getEdgeWeight(min.getStart(),min.getEnd()));
+            added.add(min.getEnd());
+            added.add(min.getStart());
+
+
+
+            //get new neighbors
             neighbors = graph.getNeighbors(min.getEnd());
             for(Integer e: neighbors){
                 if(!added.contains(e)){
@@ -124,13 +138,18 @@ public class Prim {
                     }
                 }
             }
-
-
+            //If Heap is already empty than there are isolated Nodes. A empty graph will be returned
+            //Can also leave them out but than there is the danger of a two unconnected graphs
+            if(heap.isEmpty() && added.size() < graph.getVertexCount()) return  new UndirectedGraphList();
         }
-
 		return mst;
 	}
 
+    /**
+     * Find a start Node that is not isolated
+     * @param graph The graph to look in
+     * @return Vertex-ID od the first node with at least one edge
+     */
 	private static int findStart(Graph graph){
         //It could happen that the start node is isolated. So find a start node that has at least one edge
         int start = 0;
@@ -146,6 +165,23 @@ public class Prim {
         }
         //Graph has no connected Edges
         return Integer.MAX_VALUE;
+    }
 
+    /**
+     * NOTE IS NOTE USED ANYMORE
+     * If graph has isloated return true
+     * @param g Graph to look in
+     * @return true if isolated nodes else false
+     */
+    private static boolean hasIsolated(Graph g){
+	    boolean isolated;
+	    for (int i = 0; i < g.getVertexCount() - 1; i++){
+            isolated = true;
+	        for(int j = 0; j < g.getVertexCount() -1; j++){
+                if(g.hasEdge(i,j)) isolated = false;
+            }
+	        if(isolated) return true;
+        }
+	    return false;
     }
 }
