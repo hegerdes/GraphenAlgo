@@ -1,0 +1,74 @@
+NOTE:
+
+In der Aufgabenstellung ist nicht genau definiert was mit isolierten Konten passiert. Deshalb haben wir uns für
+folgendes entschieden:
+Wenn isolierte Konten gefunden werden wird ein leerer Graph zurückgegeben. Scheinbar hat der Test aber prpbleme leere
+Graphen zu vergleichen. Wenn also nach 10sek keine Ausgabe auf der Konsole erscheint den Test neu starten bitte.
+
+Laufzeit:
+n = 5, time list = 0.002s, time heap = 0.001
+n = 10, time list = 0.004s, time heap = 0.002
+n = 20, time list = 0.011s, time heap = 0.002
+n = 50, time list = 0.0521s, time heap = 0.012
+n = 100, time list = 0.17s, time heap = 0.028
+n = 200, time list = 0.812s, time heap = 0.0430
+n = 500, time list = 4.916s, time heap = 0.12
+n = 1000, time list = 49.389s, time heap = 0.6
+n = 2000, time list = 504.879s, time heap = 3.969
+
+Der Heap ist DEUTLICH schneller. besonders bei großen Problemen macht sich das zu bemerken.
+
+Reihnfolge für die vorgegebenen Graphen prim_01.gra, prim_02.gra, prim_03.gra:
+
+In der Liste:
+prim_01.gra
+Wähle Kante: e(0,2)
+Wähle Kante: e(0,1)
+Wähle Kante: e(1,4)
+Wähle Kante: e(4,3)
+Wähle Kante: e(2,5)
+Gesamtes gewicht: 22.0
+
+prim_02.gra
+Wähle Kante: e(0,5)
+Wähle Kante: e(5,1)
+Wähle Kante: e(1,2)
+Wähle Kante: e(5,4)
+Wähle Kante: e(4,3)
+Gesamtes gewicht: 12.0
+
+prim_03.gra
+Wähle Kante: e(0,1)
+Wähle Kante: e(0,5)
+Wähle Kante: e(5,6)
+Wähle Kante: e(6,4)
+Wähle Kante: e(4,3)
+Wähle Kante: e(5,2)
+Gesamtes gewicht: 23.0
+
+Im Heap:
+prim_01.gra
+Wähle Kante: e(0,2)
+Wähle Kante: e(0,1)
+Wähle Kante: e(1,4)
+Wähle Kante: e(4,3)
+Wähle Kante: e(2,5)
+Gesamtes Gewicht: 22.0
+
+prim_02.gra
+Wähle Kante: e(0,5)
+Wähle Kante: e(5,1)
+Wähle Kante: e(1,2)
+Wähle Kante: e(5,4)
+Wähle Kante: e(4,3)
+Gesamtes Gewicht: 12.0
+
+prim_03.gra
+Wähle Kante: e(0,1)
+Wähle Kante: e(0,5)
+Wähle Kante: e(5,6)
+Wähle Kante: e(6,4)
+Wähle Kante: e(4,3)
+Wähle Kante: e(5,2)
+Gesamtes Gewicht: 23.0
+

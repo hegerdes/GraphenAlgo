@@ -16,7 +16,7 @@ public class MyTest {
         final Random random = new Random(); // set seed to obtain deterministic results
         /* generate a random graph */
         final Graph graph = new UndirectedGraphMatrix();
-        GraphGenerator.generateRandomGraph(graph, 10, random, 0.25);
+        GraphGenerator.generateRandomGraph(graph, 2000, random, 0.25);
 
         RenderGraph.renderGraph(graph, "out/random.png");
         /* construct minimum spanning trees with both List and Heap implementations */
