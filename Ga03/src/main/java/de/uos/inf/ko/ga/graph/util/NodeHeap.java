@@ -6,7 +6,7 @@ package de.uos.inf.ko.ga.graph.util;
 import java.util.Arrays;
 import java.util.PriorityQueue;
 
-public class NodeHeap extends PriorityQueue {
+public class NodeHeap extends PriorityQueue<Node> {
     private static final long serialVersionUID = 1L;
     private static final int DEFAULT_SIZE = 10;
     private Node[] heap;
