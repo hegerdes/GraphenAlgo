@@ -68,7 +68,7 @@ public class Prim {
                     //System.out.println("Wähle Kante: e(" + current_node + "," + next_node + ")");
                 }else{
                     //Found no new shortest edge. So ist must be isolated
-                    System.out.print("FAIL: Es gibt Isolierte Knoten: " + not_added.toString());
+                    System.out.println("FAIL: Es gibt Isolierte Knoten: " + not_added.toString());
                     return  new UndirectedGraphList();
                 }
             //Reset global compare states
