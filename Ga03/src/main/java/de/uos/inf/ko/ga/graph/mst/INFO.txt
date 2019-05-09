@@ -1,3 +1,8 @@
+Gruppe:
+Henrik Gerdes 969272
+Tim Hartmann 970612
+Sven Berlekamp 959295
+
 NOTE:
 
 In der Aufgabenstellung ist nicht genau definiert was mit isolierten Konten passiert. Deshalb haben wir uns für

@@ -67,6 +67,8 @@ public class Prim {
                     //glob_weight +=weight;
                     //System.out.println("Wähle Kante: e(" + current_node + "," + next_node + ")");
                 }else{
+                    //If it should work for isolated nodes uncomment this line
+                    //added.add(not_added.iterator().next());
                     //Found no new shortest edge. So ist must be isolated
                     System.out.println("FAIL: Es gibt Isolierte Knoten: " + not_added.toString());
                     return  new UndirectedGraphList();
