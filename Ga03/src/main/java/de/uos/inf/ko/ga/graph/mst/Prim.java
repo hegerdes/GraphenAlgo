@@ -67,7 +67,7 @@ public class Prim {
                     //glob_weight +=weight;
                     //System.out.println("Wähle Kante: e(" + current_node + "," + next_node + ")");
                 }else{
-                    //If it should work for isolated nodes uncomment this line
+                    //If it should work for isolated nodes uncomment this line or add a break statement
                     //added.add(not_added.iterator().next());
                     //Found no new shortest edge. So ist must be isolated
                     System.out.println("FAIL: Es gibt Isolierte Knoten: " + not_added.toString());
@@ -138,8 +138,12 @@ public class Prim {
                 }
             }
             //If Heap is already empty than there are isolated Nodes. A empty graph will be returned
-            //Can also leave them out but than there is the danger of a two unconnected graphs
-            if(heap.isEmpty() && added.size() < graph.getVertexCount()) return  new UndirectedGraphList();
+            //Can also leave them out but than there is the danger of a two unconnected graphs.
+            // If wanted just remove the return statement and add a break
+            if(heap.isEmpty() && added.size() < graph.getVertexCount()){
+                 System.out.println("FAIL: Es gibt " + (graph.getVertexCount() - added.size()) + " Isolierte Knoten");
+                 return  new UndirectedGraphList();
+            }
         }
         //For weight in prim_01.gra, prim_02.gra, prim_03.gra
         //System.out.println("Gesamtes Gewicht: " + glob_weight);

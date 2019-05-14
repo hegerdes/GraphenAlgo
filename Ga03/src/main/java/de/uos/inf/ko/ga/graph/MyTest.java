@@ -13,7 +13,7 @@ public class MyTest {
 
     public static void main(String[] args) throws IOException {
 
-        final Random random = new Random(); // set seed to obtain deterministic results
+        final Random random = new Random();
         /* generate a random graph */
         final Graph graph = new UndirectedGraphMatrix();
         GraphGenerator.generateRandomGraph(graph, 10, random, 0.25);
