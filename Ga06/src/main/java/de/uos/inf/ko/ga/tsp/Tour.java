@@ -2,15 +2,24 @@ package de.uos.inf.ko.ga.tsp;
 
 import de.uos.inf.ko.ga.graph.Graph;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 /**
  * Class representing a tour in a graph.
  * @author Tobias Oelschlägel
  *
  */
 public class Tour {
+	public final static int TOURNUMBER = 100;
 
 	private final Graph g;
 	private final int[] vertices;
+	private int size;
 
 	/**
 	 * Initializes an empty tour
@@ -28,6 +37,10 @@ public class Tour {
 		this(tour.getGraph(), tour.getVertices());
 	}
 
+	public int getSize() {
+		return size;
+	}
+
 	/**
 	 * Initializes a tour with a given order of the vertices.
 	 * @param g Graph
@@ -35,6 +48,7 @@ public class Tour {
 	 */
 	public Tour(Graph g, int[] vertices) {
 		this.g = g;
+		this.size = g.getVertexCount();
 
 		if (vertices != null) {
 			this.vertices = new int[vertices.length];
@@ -42,6 +56,30 @@ public class Tour {
 		} else {
 			this.vertices = new int[0];
 		}
+	}
+
+	public static Tour[] randomTours(Graph g)
+	{
+		Tour[] randomTours = new Tour[TOURNUMBER];
+
+		for (int i = 0; i < TOURNUMBER; ++i)
+		{
+			// Fill a list with 0 to number of vertices numbers and shuffle it
+			List<Integer> randTourList = IntStream.range(0,g.getVertexCount()).boxed().collect(Collectors.toList());
+			Collections.shuffle(randTourList);
+
+			// Through javas great features convert INT[] to int[] - GREAT
+			Integer[] tmp = randTourList.toArray(new Integer[g.getVertexCount()-1]);
+			int[] randTourArray = new int[g.getVertexCount()-1];
+			for(int j = 0; j < g.getVertexCount()-1; ++j){
+				randTourArray[j] =  tmp[j];
+			}
+			Tour t = new Tour(g,randTourArray);
+			System.out.println(t + " " + i);
+			randomTours[i] = t;
+
+		}
+		return randomTours;
 	}
 
 	/**

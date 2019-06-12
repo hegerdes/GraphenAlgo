@@ -1,5 +1,10 @@
 package de.uos.inf.ko.ga.tsp;
 
+import de.uos.inf.ko.ga.graph.Graph;
+
+import java.util.*;
+import java.math.*;
+
 public class TwoOpt {
 
 	/**
@@ -19,8 +24,53 @@ public class TwoOpt {
 		assert(pos2 > pos1 + 1);
 		assert(pos2 < tour.getVertices().length);
 		assert(pos1 != (pos2 + 1) % tour.getVertices().length);
+		// throw new UnsupportedOperationException("method not implemented");
 
-		throw new UnsupportedOperationException("method not implemented");
+
+		boolean pos2tonull = false;
+		int pos1suc = pos2;
+		int pos2suc = pos1;
+
+		if (pos2 == tour.getVertices().length - 1)
+		{
+			pos2tonull = true;
+		}
+
+		int[] vertices = tour.getVertices();
+		int[] vertices2 = vertices;
+
+		if (!pos2tonull) {
+
+			int i = pos1 + 1;
+			while (pos1suc != pos1 + 1) {
+				vertices[i] = vertices2[pos1suc];
+				pos1suc--;
+				i++;
+			}
+
+			while (pos2 != vertices.length - 1) {
+				vertices[i] = vertices2[pos2 + 1];
+				pos2++;
+				i++;
+			}
+		}
+		else {
+			int i = 1;
+			while (pos1 != vertices.length -1) {
+				vertices[i] = vertices2[pos1 +1];
+				pos1++;
+				i++;
+			}
+
+			while (pos2suc != -1)
+			{
+				vertices[i] = vertices2[pos2suc];
+				pos2suc--;
+				i++;
+			}
+		}
+
+		return new Tour(tour.getGraph(),vertices);
 	}
 
 	/**
@@ -35,7 +85,66 @@ public class TwoOpt {
 	 * @return tour obtained by performing the first or the best improvement
 	 */
 	public static Tour twoOptNeighborhood(Tour tour, boolean firstFit) {
-		throw new UnsupportedOperationException("method not implemented");
+
+		Tour best_tour = tour;
+		Tour new_tour = tour;
+
+		if(!firstFit)
+		{
+			for (int i = 0; i < tour.getSize()-1; ++i) {
+				if (i >= 3) {
+					for (int x = 0; x < (i - 2); x++) {
+						if(i != (x + 1) % tour.getVertices().length) {
+							new_tour = twoOptExchange(tour, x, i);
+							if (new_tour.getCosts() < best_tour.getCosts()) {
+								best_tour = new_tour;
+							}
+						}
+					}
+				} else {
+
+					for (int x = i + 2; x < tour.getGraph().getVertexCount(); x++) {
+						if(i != (x + 1) % tour.getVertices().length) {
+							new_tour = twoOptExchange(tour, i, x);
+							if (new_tour.getCosts() < best_tour.getCosts()) {
+								best_tour = new_tour;
+							}
+						}
+					}
+				}
+			}
+
+			return new_tour;
+		}
+		else {
+			for (int i = 0; i < tour.getSize(); ++i) {
+
+				if (i >= 3) {
+					for (int x = 0; x <= i - 2; x++) {
+						if(i != (x + 1) % tour.getVertices().length) {
+							new_tour = twoOptExchange(tour, x, i);
+							if (new_tour.getCosts() < best_tour.getCosts()) {
+								return new_tour;
+							}
+						}
+					}
+				}
+
+				for (int x = i + 2; x < tour.getGraph().getVertexCount(); x++) {
+					if(i != (x + 1) % tour.getVertices().length) {
+						new_tour = twoOptExchange(tour, i, x);
+						if (new_tour.getCosts() < best_tour.getCosts()) {
+							return new_tour;
+						}
+					}
+				}
+			}
+			return new_tour;
+		}
+
+
+
+
 	}
 
 	/**
@@ -47,6 +156,29 @@ public class TwoOpt {
 	 * @return best tour obtained by iteratively applying the two-opt neighborhood
 	 */
 	public static Tour iterativeTwoOpt(Tour tour, boolean firstFit) {
-		throw new UnsupportedOperationException("method not implemented");
+
+		if (!firstFit ){
+			while(twoOptNeighborhood(tour,false).getCosts() - tour.getCosts() != 0)
+			{
+				if (twoOptNeighborhood(tour,false).getCosts() - tour.getCosts() > 0)
+				{
+					tour = twoOptNeighborhood(tour,false);
+				}
+			}
+		}
+		else {
+			while (twoOptNeighborhood(tour, true).getCosts() - tour.getCosts() != 0)
+			{
+				if(twoOptNeighborhood(tour,true).getCosts() - tour.getCosts() > 0)
+				{
+					tour = twoOptNeighborhood(tour,true);
+				}
+			};
+		}
+		//throw new UnsupportedOperationException("method not implemented");
+		return tour;
 	}
+
+
+
 }
