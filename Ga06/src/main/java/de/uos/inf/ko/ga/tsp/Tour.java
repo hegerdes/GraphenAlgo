@@ -70,14 +70,13 @@ public class Tour {
 
 			// Through javas great features convert INT[] to int[] - GREAT
 			Integer[] tmp = randTourList.toArray(new Integer[g.getVertexCount()-1]);
-			int[] randTourArray = new int[g.getVertexCount()-1];
-			for(int j = 0; j < g.getVertexCount()-1; ++j){
+			int[] randTourArray = new int[g.getVertexCount()];
+			for(int j = 0; j < g.getVertexCount(); ++j){
 				randTourArray[j] =  tmp[j];
 			}
 			Tour t = new Tour(g,randTourArray);
-			System.out.println(t + " " + i);
 			randomTours[i] = t;
-
+			//System.out.println(t + " " + i);
 		}
 		return randomTours;
 	}

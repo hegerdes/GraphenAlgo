@@ -43,14 +43,15 @@ public class TwoOptTest {
 
 				for(Tour t: randomTSPs){
 				    if(t.getCosts() > worst.getCosts()) worst = t;
-                    if(t.getCosts() > best.getCosts()) best = t;
+                    if(t.getCosts() < best.getCosts()) best = t;
                     cost_all += t.getCosts();
                 }
 
 				// TODO: output minimum, maximum, and average tour length
+				System.out.println("TSP Results for file: " + filename);
 				System.out.println("Best: " + best.toString() + " Cost: " + best.getCosts());
 				System.out.println("Worst: " + worst.toString() + " Cost: " + worst.getCosts());
-				System.out.println("Average: " + cost_all/Tour.TOURNUMBER);
+				System.out.println("Average: " + cost_all/Tour.TOURNUMBER + "\n");
 
 
 
