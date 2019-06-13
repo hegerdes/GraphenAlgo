@@ -24,53 +24,43 @@ public class TwoOpt {
 		assert(pos2 > pos1 + 1);
 		assert(pos2 < tour.getVertices().length);
 		assert(pos1 != (pos2 + 1) % tour.getVertices().length);
-		// throw new UnsupportedOperationException("method not implemented");
 
 
-		boolean pos2tonull = false;
-		int pos1suc = pos2;
+		boolean pos2_last = (pos2 == tour.getSize() - 1);
 		int pos2suc = pos1;
 
-		if (pos2 == tour.getVertices().length - 1)
-		{
-			pos2tonull = true;
-		}
+		//Keep old values to compare
+		int[] newTour = tour.getVertices().clone();
+		final int[] oldTour = tour.getVertices().clone();
 
-		int[] vertices = tour.getVertices();
-		int[] vertices2 = vertices;
-
-		if (!pos2tonull) {
-
-			int i = pos1 + 1;
-			while (pos1suc != pos1 + 1) {
-				vertices[i] = vertices2[pos1suc];
-				pos1suc--;
-				i++;
-			}
-
-			while (pos2 != vertices.length - 1) {
-				vertices[i] = vertices2[pos2 + 1];
-				pos2++;
-				i++;
-			}
-		}
-		else {
+		//Shift edges
+		if (pos2_last) {
 			int i = 1;
-			while (pos1 != vertices.length -1) {
-				vertices[i] = vertices2[pos1 +1];
+			while (pos1+1 < newTour.length - 1) {
+				newTour[i] = oldTour[pos1+1];
 				pos1++;
 				i++;
 			}
-
-			while (pos2suc != -1)
-			{
-				vertices[i] = vertices2[pos2suc];
+			while (pos2suc >= 0){
+				newTour[i] = oldTour[pos2suc];
 				pos2suc--;
 				i++;
 			}
-		}
+		}else {
+			System.arraycopy(oldTour, 0, newTour, 0, pos1);
 
-		return new Tour(tour.getGraph(),vertices);
+			int offset = 0;
+			for (int c = pos1; c <= pos2; ++c) {
+				newTour[c] = oldTour[pos2 - offset];
+				offset++;
+			}
+			pos2++;
+			while(pos2 < oldTour.length){
+				newTour[pos2] = oldTour[pos2];
+				pos2++;
+			}
+		}
+		return new Tour(tour.getGraph(),newTour);
 	}
 
 	/**
@@ -86,42 +76,16 @@ public class TwoOpt {
 	 */
 	public static Tour twoOptNeighborhood(Tour tour, boolean firstFit) {
 
-		Tour best_tour = tour;
-		Tour new_tour = tour;
+		Tour best_tour = new Tour(tour);
+		Tour new_tour = new Tour(tour);
 
-		if(!firstFit)
-		{
-			for (int i = 0; i < tour.getSize()-1; ++i) {
-				if (i >= 3) {
-					for (int x = 0; x < (i - 2); x++) {
-						if(i != (x + 1) % tour.getVertices().length) {
-							new_tour = twoOptExchange(tour, x, i);
-							if (new_tour.getCosts() < best_tour.getCosts()) {
-								best_tour = new_tour;
-							}
-						}
-					}
-				} else {
 
-					for (int x = i + 2; x < tour.getGraph().getVertexCount(); x++) {
-						if(i != (x + 1) % tour.getVertices().length) {
-							new_tour = twoOptExchange(tour, i, x);
-							if (new_tour.getCosts() < best_tour.getCosts()) {
-								best_tour = new_tour;
-							}
-						}
-					}
-				}
-			}
-
-			return new_tour;
-		}
-		else {
-			for (int i = 0; i < tour.getSize(); ++i) {
-
-				if (i >= 3) {
-					for (int x = 0; x <= i - 2; x++) {
-						if(i != (x + 1) % tour.getVertices().length) {
+		//First-fit
+		if(firstFit) {
+			for (int i = 0; i < tour.getSize(); i++) {
+				if (i >= 2) {
+					for (int x = 0; x < i - 2; x++) {
+						if (x != (i + 1) % tour.getVertices().length) {
 							new_tour = twoOptExchange(tour, x, i);
 							if (new_tour.getCosts() < best_tour.getCosts()) {
 								return new_tour;
@@ -129,9 +93,8 @@ public class TwoOpt {
 						}
 					}
 				}
-
-				for (int x = i + 2; x < tour.getGraph().getVertexCount(); x++) {
-					if(i != (x + 1) % tour.getVertices().length) {
+				for (int x = i + 2; x < tour.getSize(); x++) {
+					if (i != (x + 1) % tour.getVertices().length) {
 						new_tour = twoOptExchange(tour, i, x);
 						if (new_tour.getCosts() < best_tour.getCosts()) {
 							return new_tour;
@@ -140,11 +103,30 @@ public class TwoOpt {
 				}
 			}
 			return new_tour;
+		}else {
+			//Best-fit
+			for (int i = 0; i < tour.getSize(); i++) {
+				if (i >= 2) {
+					for (int x = 0; x < i - 2; x++) {
+						if (x != (i + 1) % tour.getVertices().length) {
+							new_tour = twoOptExchange(tour, x, i);
+							if (new_tour.getCosts() < best_tour.getCosts()) {
+								best_tour = new_tour;
+							}
+						}
+					}
+				}
+				for (int x = i + 2; x < tour.getSize(); x++) {
+					if (i != (x + 1) % tour.getVertices().length) {
+						new_tour = twoOptExchange(tour, i, x);
+						if (new_tour.getCosts() < best_tour.getCosts()) {
+							best_tour = new_tour;
+						}
+					}
+				}
+			}
+			return best_tour;
 		}
-
-
-
-
 	}
 
 	/**
@@ -157,25 +139,14 @@ public class TwoOpt {
 	 */
 	public static Tour iterativeTwoOpt(Tour tour, boolean firstFit) {
 
-		if (!firstFit ){
-			while(twoOptNeighborhood(tour,false).getCosts() - tour.getCosts() != 0)
-			{
-				if (twoOptNeighborhood(tour,false).getCosts() - tour.getCosts() > 0)
-				{
-					tour = twoOptNeighborhood(tour,false);
+		if (!firstFit ){tour = twoOptNeighborhood(tour,false);}
+		else {
+			while (twoOptNeighborhood(tour, true).getCosts() - tour.getCosts() != 0) {
+				if(twoOptNeighborhood(tour,true).getCosts() - tour.getCosts() > 0) {
+					tour = twoOptNeighborhood(tour,true);
 				}
 			}
 		}
-		else {
-			while (twoOptNeighborhood(tour, true).getCosts() - tour.getCosts() != 0)
-			{
-				if(twoOptNeighborhood(tour,true).getCosts() - tour.getCosts() > 0)
-				{
-					tour = twoOptNeighborhood(tour,true);
-				}
-			};
-		}
-		//throw new UnsupportedOperationException("method not implemented");
 		return tour;
 	}
 
