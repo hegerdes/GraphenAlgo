@@ -1,10 +1,5 @@
 package de.uos.inf.ko.ga.tsp;
 
-import de.uos.inf.ko.ga.graph.Graph;
-
-import java.util.*;
-import java.math.*;
-
 public class TwoOpt {
 
 	/**
@@ -25,13 +20,12 @@ public class TwoOpt {
 		assert(pos2 < tour.getVertices().length);
 		assert(pos1 != (pos2 + 1) % tour.getVertices().length);
 
-
 		boolean pos2_last = (pos2 == tour.getSize() - 1);
 		int pos2suc = pos1;
 
 		//Keep old values to compare
 		int[] newTour = tour.getVertices().clone();
-		final int[] oldTour = tour.getVertices().clone();
+		int[] oldTour = tour.getVertices().clone();
 
 		//Shift edges
 		if (pos2_last) {
@@ -75,57 +69,54 @@ public class TwoOpt {
 	 * @return tour obtained by performing the first or the best improvement
 	 */
 	public static Tour twoOptNeighborhood(Tour tour, boolean firstFit) {
-
-		Tour best_tour = new Tour(tour);
-		Tour new_tour = new Tour(tour);
-
-
+		Tour tour1 = new Tour(tour);
+		Tour tour2 = new Tour(tour);
 		//First-fit
 		if(firstFit) {
 			for (int i = 0; i < tour.getSize(); i++) {
 				if (i >= 2) {
-					for (int x = 0; x < i - 2; x++) {
-						if (x != (i + 1) % tour.getVertices().length) {
-							new_tour = twoOptExchange(tour, x, i);
-							if (new_tour.getCosts() < best_tour.getCosts()) {
-								return new_tour;
+					for (int j = 0; j < i - 2; j++) {
+						if (j != (i + 1) % tour.getVertices().length) {
+							tour2 = twoOptExchange(tour, j, i);
+							if (tour2.getCosts() < tour1.getCosts()) {
+								return tour2;
 							}
 						}
 					}
 				}
-				for (int x = i + 2; x < tour.getSize(); x++) {
-					if (i != (x + 1) % tour.getVertices().length) {
-						new_tour = twoOptExchange(tour, i, x);
-						if (new_tour.getCosts() < best_tour.getCosts()) {
-							return new_tour;
+				for (int j = i + 2; j < tour.getSize(); j++) {
+					if (i != (j + 1) % tour.getVertices().length) {
+						tour2 = twoOptExchange(tour, i, j);
+						if (tour2.getCosts() < tour1.getCosts()) {
+							return tour2;
 						}
 					}
 				}
 			}
-			return new_tour;
+			return tour2;
 		}else {
 			//Best-fit
 			for (int i = 0; i < tour.getSize(); i++) {
 				if (i >= 2) {
-					for (int x = 0; x < i - 2; x++) {
-						if (x != (i + 1) % tour.getVertices().length) {
-							new_tour = twoOptExchange(tour, x, i);
-							if (new_tour.getCosts() < best_tour.getCosts()) {
-								best_tour = new_tour;
+					for (int j = 0; j < i - 2; j++) {
+						if (j != (i + 1) % tour.getVertices().length) {
+							tour2 = twoOptExchange(tour, j, i);
+							if (tour2.getCosts() < tour1.getCosts()) {
+								tour1 = tour2;
 							}
 						}
 					}
 				}
-				for (int x = i + 2; x < tour.getSize(); x++) {
-					if (i != (x + 1) % tour.getVertices().length) {
-						new_tour = twoOptExchange(tour, i, x);
-						if (new_tour.getCosts() < best_tour.getCosts()) {
-							best_tour = new_tour;
+				for (int j = i + 2; j < tour.getSize(); j++) {
+					if (i != (j + 1) % tour.getVertices().length) {
+						tour2 = twoOptExchange(tour, i, j);
+						if (tour2.getCosts() < tour1.getCosts()) {
+							tour1 = tour2;
 						}
 					}
 				}
 			}
-			return best_tour;
+			return tour1;
 		}
 	}
 
@@ -138,18 +129,14 @@ public class TwoOpt {
 	 * @return best tour obtained by iteratively applying the two-opt neighborhood
 	 */
 	public static Tour iterativeTwoOpt(Tour tour, boolean firstFit) {
-
 		if (!firstFit ){tour = twoOptNeighborhood(tour,false);}
 		else {
-			while (twoOptNeighborhood(tour, true).getCosts() - tour.getCosts() != 0) {
-				if(twoOptNeighborhood(tour,true).getCosts() - tour.getCosts() > 0) {
-					tour = twoOptNeighborhood(tour,true);
-				}
+			double cost = twoOptNeighborhood(tour, true).getCosts();
+			while (cost - tour.getCosts() != 0) {
+				if(cost - tour.getCosts() > 0) tour = twoOptNeighborhood(tour,true);
+				cost = twoOptNeighborhood(tour, true).getCosts();
 			}
 		}
 		return tour;
 	}
-
-
-
 }
